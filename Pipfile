@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+protobuf = "==3.19.0"
+keras-tuner = "*"
+pandas = "==1.4.2"
+numpy = "*"
+clickhouse-driver = "*"
+h5py = "*"
+sklearn = "*"
+tqdm = "*"
+fastapi = "==0.54.1"
+uvicorn = "==0.11.5"
+
+[dev-packages]
+tensorflow-macos = "*"
+pytest = "*"
+
+[requires]
+python_version = "3.8"

@@ -1,0 +1,9 @@
+pandas==1.4.2
+numpy
+clickhouse-driver
+h5py
+# tensorflow-macos
+sklearn
+tqdm
+# protobuf==3.19.0
+# keras-tuner

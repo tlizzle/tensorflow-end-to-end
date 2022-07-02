@@ -1,0 +1,52 @@
+version: '2.1'
+services:
+  clickhouse:
+    image: lunalabsltd/clickhouse-server:21.7.2.7-arm
+    container_name: "clickhouse"
+    hostname: clickhouse
+    expose:
+      - 9000
+    ports:
+      - "9000:9000" # native interface
+      - "8123:8123" # http interface
+    environment:
+      - CLICKHOUSE_DB=testing
+      - CLICKHOUSE_USER=user1
+      - CLICKHOUSE_PASSWORD=123456
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - ./clickhouse-data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8123/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  serving:
+    image: emacski/tensorflow-serving:2.5.1
+    environment:
+      - MODEL_NAME=tensorflow-end-to-end
+      - MODEL_BASE_PATH=/opt
+    volumes:
+      - /opt/tensorflow-end-to-end:/opt/tensorflow-end-to-end
+    ports:
+      - 8501:8501
+  training:
+    image: tensorflow-end-to-end:latest
+    expose:
+      - "8000"
+    environment:
+      - host=clickhouse
+    ports:
+      - "8000:8000"
+      - "6006:6006"
+    volumes:
+      - /opt/tensorflow-end-to-end:/opt/tensorflow-end-to-end
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    command:
+      - make
+      - init-training
